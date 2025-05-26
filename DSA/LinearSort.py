@@ -8,6 +8,7 @@ Install Matplotlib if you haven't already.
 If you want to learn more about each algorith go to this links:
 - Radix Sort: https://www.youtube.com/watch?v=XiuSW_mEn7g
 - Counting Sort: https://www.youtube.com/watch?v=OKd534EWcdk
+- Bucker Sort: https://www.youtube.com/watch?v=VuXbEb5ywrU
 """
 
 import matplotlib.pyplot as plt
