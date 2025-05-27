@@ -1,7 +1,7 @@
 """
 File covering Binary Search Tree (BST) operations.
 """
-from DSA import Node
+from DSA import Node, print_tree
 
 class BST:
 
@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
 
     print("BST:")
-    bst.print_tree()
+    print_tree(bst)
 
     print("Preorder Traversal:")
     bst.preorder_traverse()
