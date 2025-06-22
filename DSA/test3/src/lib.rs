@@ -376,6 +376,182 @@ pub mod graphs {
 
             Ok(distances)
         }
+
+        pub fn floyd_warshall(&self) -> Vec<Vec<i32>> {
+            let n = self.nodes.len();
+
+            let mut dist = vec![vec![i32::MAX; n]; n];
+
+            for i in 0..n {
+                dist[i][i] = 0;
+            }
+
+            for edge in &self.edges {
+                dist[edge.src][edge.dest] = edge.weight;
+                dist[edge.dest][edge.src] = edge.weight;
+            }
+
+            for k in 0..n {
+                for i in 0..n {
+                    for j in 0..n {
+                        if dist[i][k] != i32::MAX && dist[k][j] != i32::MAX {
+                            let potential_dist = match dist[i][k].checked_add(dist[k][j]) {
+                                Some(sum) => sum,
+                                None => continue,
+                            };
+
+                            if potential_dist < dist[i][j] {
+                                dist[i][j] = potential_dist;
+                            }
+                        }
+                    }
+                }
+            }
+
+            dist
+        }
+
+        pub fn ford_fulkerson(&self, source: usize, sink: usize) -> i32 {
+            let n = self.nodes.len();
+
+            let mut residual_graph = vec![vec![0; n]; n];
+
+            for edge in &self.edges {
+                residual_graph[edge.src][edge.dest] = edge.weight;
+            }
+
+            let mut max_flow = 0;
+            let mut parent = vec![0; n];
+
+            while self.bfs_for_ford_fulkerson(&residual_graph, source, sink, &mut parent) {
+                let mut path_flow = i32::MAX;
+                let mut v = sink;
+                while v != source {
+                    let u = parent[v];
+                    path_flow = path_flow.min(residual_graph[u][v]);
+                    v = u;
+                }
+
+                let mut v = sink;
+                while v != source {
+                    let u = parent[v];
+                    residual_graph[u][v] -= path_flow;
+                    residual_graph[v][u] += path_flow;
+                    v = u;
+                }
+
+                max_flow += path_flow;
+            }
+
+            max_flow
+        }
+
+        fn bfs_for_ford_fulkerson(&self, residual_graph: &Vec<Vec<i32>>, source: usize, sink: usize, parent: &mut Vec<usize>) -> bool {
+            let n = self.nodes.len();
+            let mut visited = vec![false; n];
+
+            let mut queue = std::collections::VecDeque::new();
+            queue.push_back(source);
+            visited[source] = true;
+            parent[source] = source;
+
+            while let Some(u) = queue.pop_front() {
+                for v in 0..n {
+                    if !visited[v] && residual_graph[u][v] > 0 {
+                        queue.push_back(v);
+                        parent[v] = u;
+                        visited[v] = true;
+
+                        if v == sink {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            false
+        }
+
+        pub fn ford_fulkerson_visualize(&self, source: usize, sink: usize) -> (i32, Vec<Vec<i32>>) {
+            let n = self.nodes.len();
+
+            let mut residual_graph = vec![vec![0; n]; n];
+            let mut original_capacity = vec![vec![0; n]; n];
+
+            for edge in &self.edges {
+                residual_graph[edge.src][edge.dest] = edge.weight;
+                original_capacity[edge.src][edge.dest] = edge.weight;
+            }
+
+            let mut max_flow = 0;
+            let mut parent = vec![0; n];
+
+            while self.bfs_for_ford_fulkerson(&residual_graph, source, sink, &mut parent) {
+                let mut path_flow = i32::MAX;
+                let mut v = sink;
+                while v != source {
+                    let u = parent[v];
+                    path_flow = path_flow.min(residual_graph[u][v]);
+                    v = u;
+                }
+
+                let mut v = sink;
+                while v != source {
+                    let u = parent[v];
+                    residual_graph[u][v] -= path_flow;
+                    residual_graph[v][u] += path_flow;
+                    v = u;
+                }
+
+                max_flow += path_flow;
+            }
+
+            let mut flow_matrix = vec![vec![0; n]; n];
+            for i in 0..n {
+                for j in 0..n {
+                    if original_capacity[i][j] > 0 {
+                        flow_matrix[i][j] = original_capacity[i][j] - residual_graph[i][j];
+                    }
+                }
+            }
+
+            (max_flow, flow_matrix)
+        }
+
+        pub fn to_dot_with_flow(&self, flow_matrix: &Vec<Vec<i32>>) -> String {
+            let mut dot = String::from("digraph G {\n");
+
+            for (i, node) in self.nodes.iter().enumerate() {
+                dot.push_str(&format!("  {} [label=\"{}\"];\n", i, node.value));
+            }
+
+            for edge in &self.edges {
+                let flow = flow_matrix[edge.src][edge.dest];
+                dot.push_str(&format!("  {} -> {} [label=\"{}/{}\"];\n",
+                                      edge.src, edge.dest, flow, edge.weight));
+            }
+
+            dot.push_str("}\n");
+            dot
+        }
+
+        pub fn visualize_flow(&self, filename: &str, flow_matrix: &Vec<Vec<i32>>) -> Result<(), Box<dyn std::error::Error>> {
+            std::fs::create_dir_all("graphs")?;
+
+            let dot_content = self.to_dot_with_flow(flow_matrix);
+            let dot_file = format!("graphs/{}.dot", filename);
+            let png_file = format!("graphs/{}.png", filename);
+
+            let mut file = File::create(&dot_file)?;
+            file.write_all(dot_content.as_bytes())?;
+
+            Command::new("dot")
+                .args(&["-Tpng", &dot_file, "-o", &png_file])
+                .output()?;
+
+            println!("Flow graph saved as {}", png_file);
+            Ok(())
+        }
     }
 
     pub fn graph_main(){
@@ -493,5 +669,93 @@ pub mod bellman_ford {
         }
 
         graph.visualize("bellman_ford_graph.dot").unwrap();
+    }
+}
+
+pub mod floyd_warshall{
+    use crate::graphs::{Graph, Node};
+
+    pub fn floyd_warshall_main() {
+        let mut graph = Graph::new();
+        for i in 0..4 {
+            graph.add_node(i);
+        }
+
+        graph.add_edge(0, 1, 3);
+        graph.add_edge(0, 2, 5);
+        graph.add_edge(1, 2, 1);
+        graph.add_edge(1, 3, 7);
+        graph.add_edge(2, 3, 2);
+
+        graph.visualize("floyd_warshall_graph.dot").unwrap();
+
+        let distances = graph.floyd_warshall();
+
+        println!("Floyd-Warshall Algorithm Shortest Distances:");
+
+        print!("    ");
+        for j in 0..distances[0].len() {
+            print!("{:3} ", j);
+        }
+        println!();
+
+        print!("    ");
+        for _ in 0..distances[0].len() {
+            print!("----");
+        }
+        println!();
+
+        for i in 0..distances.len() {
+            print!("{:2} | ", i);
+            for j in 0..distances[i].len() {
+                if distances[i][j] == i32::MAX {
+                    print!("INF ");
+                } else {
+                    print!("{:3} ", distances[i][j]);
+                }
+            }
+            println!();
+        }
+    }
+}
+
+pub mod ford_fulkerson {
+    use crate::graphs::{Graph, Node};
+
+    pub fn ford_fulkerson_main() {
+        let mut graph = Graph::new();
+        for i in 0..6 {
+            graph.add_node(i);
+        }
+
+        graph.add_edge(0, 1, 16);
+        graph.add_edge(0, 2, 13);
+        graph.add_edge(1, 2, 10);
+        graph.add_edge(1, 3, 12);
+        graph.add_edge(2, 1, 4);
+        graph.add_edge(2, 4, 14);
+        graph.add_edge(3, 2, 9);
+        graph.add_edge(3, 5, 20);
+        graph.add_edge(4, 3, 7);
+        graph.add_edge(4, 5, 4);
+
+        graph.visualize("ford_fulkerson_original.dot").unwrap();
+
+        let (max_flow, flow_matrix) = graph.ford_fulkerson_visualize(0, 5);
+        println!("Ford-Fulkerson Algorithm Maximum Flow from Node 0 to Node 5: {}", max_flow);
+
+        graph.visualize_flow("ford_fulkerson_flow.dot", &flow_matrix).unwrap();
+
+        println!("Flow Matrix:");
+        for i in 0..flow_matrix.len() {
+            for j in 0..flow_matrix[i].len() {
+                if flow_matrix[i][j] > 0 {
+                    println!("Flow from {} to {}: {}/{}",
+                             i, j, flow_matrix[i][j],
+                             graph.edges.iter().find(|e| e.src == i && e.dest == j)
+                                 .map_or(0, |e| e.weight));
+                }
+            }
+        }
     }
 }
