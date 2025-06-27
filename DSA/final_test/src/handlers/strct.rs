@@ -1,5 +1,5 @@
 use crate::visualizer::{Visualizer, DataStructures};
-use crate::display::display_structures_menu;
+use crate::display::{display_structures_menu, CYAN, RESET};
 use crate::Heap;
 use std::io;
 
@@ -25,7 +25,6 @@ pub fn handle_structures_menu() {
 
                 println!("\n{}Heap Visualization Demo:{}", "\x1b[1m\x1b[36m", "\x1b[0m");
 
-                // Push elements with visualization
                 visualizer.visualize_heap_push(&mut max_heap, 256);
                 visualizer.visualize_heap_push(&mut max_heap, 16);
                 visualizer.visualize_heap_push(&mut max_heap, 8);
@@ -42,6 +41,19 @@ pub fn handle_structures_menu() {
                     visualizer.visualize_heap_pop(&mut max_heap);
                 }
             },
+            "2" =>{
+                crate::theories::priority_queue::display_priority_queue_theory();
+
+                println!("\n{}Would you like to try the interactive demo? (y/n){}", CYAN, RESET);
+                let mut response = String::new();
+                io::stdin().read_line(&mut response).expect("Failed to read line");
+
+                if response.trim().to_lowercase() == "y" {
+                    crate::display::run_priority_queue_interaction();
+                } else {
+                    crate::theories::priority_queue::display_interactive_hint();
+                }
+            }
             _ => break,
         }
     }
