@@ -286,11 +286,13 @@ pub mod display;
 pub mod handlers {
     pub mod algo;
     pub mod strct;
+    pub mod time_complexity;
 }
 
 pub mod theories{
     pub mod heap;
     pub mod priority_queue;
+    pub mod time_complexity;
 }
 
 pub mod interactive {
