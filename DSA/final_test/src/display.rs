@@ -1,13 +1,13 @@
 use crate::visualizer::SortingAlgorithm;
 use std::io;
 
-const RESET: &str = "\x1B[0m";
-const BOLD: &str = "\x1B[1m";
-const GREEN: &str = "\x1B[32m";
-const YELLOW: &str = "\x1B[33m";
-const BLUE: &str = "\x1B[34m";
-const MAGENTA: &str = "\x1B[35m";
-const CYAN: &str = "\x1B[36m";
+pub const RESET: &str = "\x1B[0m";
+pub const BOLD: &str = "\x1B[1m";
+pub const GREEN: &str = "\x1B[32m";
+pub const YELLOW: &str = "\x1B[33m";
+pub const BLUE: &str = "\x1B[34m";
+pub const MAGENTA: &str = "\x1B[35m";
+pub const CYAN: &str = "\x1B[36m";
 
 pub enum Partitions{
     Lomuto,
@@ -189,19 +189,25 @@ pub fn display_info_about_partition(partition: &Partitions) {
 }
 
 pub fn display_structures_menu() -> Vec<&'static str> {
-    
     let structures = [
         "1. Heaps",
+        "2. Priority Queue"
     ];
 
     println!("\n{}{}Choose structure or input none numerical value to quit:{}", BOLD, CYAN, RESET);
     for (i, strct) in structures.iter().enumerate() {
         let color = match i {
             0 => YELLOW,
+            1 => GREEN,
             _ => RESET,
         };
         println!("{}{}{}", color, strct, RESET);
     }
-    
+
     structures.to_vec()
+}
+
+pub fn run_priority_queue_interaction() {
+    use crate::interactive::priority_queue::run_priority_queue_demo;
+    run_priority_queue_demo();
 }

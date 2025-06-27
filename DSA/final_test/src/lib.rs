@@ -160,16 +160,27 @@ where
         }
     }
 
-    pub fn push(&mut self, val: T){
+    pub fn push(&mut self, val: T) {
         self.data.push(val);
-        self.heapify(self.data.len() - 1);
+        self.bubble_up(self.data.len() - 1);
     }
 
     pub fn peak(&self) -> Option<&T> {
         self.data.get(0)
     }
 
-    fn heapify(&mut self, idx: usize) {
+    fn bubble_up(&mut self, mut idx: usize) {
+        while idx > 0 {
+            let parent = (idx - 1) / 2;
+            if !(self.cmp)(&self.data[idx], &self.data[parent]) {
+                break;
+            }
+            self.data.swap(idx, parent);
+            idx = parent;
+        }
+    }
+
+    fn heapify_down(&mut self, idx: usize) {
         if self.data.is_empty() {
             return;
         }
@@ -209,7 +220,7 @@ where
         let result = self.data.pop();
 
         if !self.data.is_empty() {
-            self.heapify(0);
+            self.heapify_down(0);
         }
 
         result
@@ -225,6 +236,50 @@ where
 
 }
 
+pub struct PriorityQueue<T>
+where
+    T: Ord,
+{
+    heap: Heap<T, fn(&T, &T) -> bool>,
+}
+
+impl<T> PriorityQueue<T>
+where
+    T: Ord,
+{
+    pub fn new() -> Self {
+        Self {
+            heap: Heap::new(|a, b| a > b),
+        }
+    }
+
+    pub fn new_min() -> Self {
+        Self {
+            heap: Heap::new(|a, b| a < b),
+        }
+    }
+
+    pub fn enqueue(&mut self, item: T) {
+        self.heap.push(item);
+    }
+
+    pub fn dequeue(&mut self) -> Option<T> {
+        self.heap.pop()
+    }
+
+    pub fn peek(&self) -> Option<&T> {
+        self.heap.peak()
+    }
+
+    pub fn len(&self) -> usize {
+        self.heap.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.heap.is_empty()
+    }
+}
+
 pub mod visualizer;
 pub mod display;
 
@@ -235,4 +290,9 @@ pub mod handlers {
 
 pub mod theories{
     pub mod heap;
+    pub mod priority_queue;
+}
+
+pub mod interactive {
+    pub mod priority_queue;
 }
