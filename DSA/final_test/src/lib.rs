@@ -280,6 +280,110 @@ where
     }
 }
 
+pub struct BST<T>
+where
+    T: Ord
+{
+    root: Option<Box<Node<T>>>,
+}
+
+struct Node<T>
+where
+    T: Ord,
+{
+    value: T,
+    left: Option<Box<Node<T>>>,
+    right: Option<Box<Node<T>>>,
+}
+
+impl<T> BST<T>
+where
+    T: Ord,
+{
+    pub fn new() -> Self {
+        Self { root: None }
+    }
+
+    pub fn insert(&mut self, value: T) {
+        let root = &mut self.root;
+
+        if root.is_none() {
+            *root = Some(Box::new(Node {
+                value,
+                left: None,
+                right: None,
+            }));
+            return;
+        }
+
+        Self::insert_recursive(root, value);
+    }
+
+    fn insert_recursive(node: &mut Option<Box<Node<T>>>, value: T) {
+        if let Some(n) = node {
+            if value < n.value {
+                Self::insert_recursive(&mut n.left, value);
+            } else if value > n.value {
+                Self::insert_recursive(&mut n.right, value);
+            }
+        } else {
+            *node = Some(Box::new(Node {
+                value,
+                left: None,
+                right: None,
+            }));
+        }
+    }
+
+    fn contains_recursive(node: &Option<Box<Node<T>>>, value: &T) -> bool {
+        match node {
+            None => false,
+            Some(n) => {
+                if value < &n.value {
+                    Self::contains_recursive(&n.left, value)
+                } else if value > &n.value {
+                    Self::contains_recursive(&n.right, value)
+                } else {
+                    true
+                }
+            }
+        }
+    }
+    
+    pub fn contains(&self, value: &T) -> bool {
+        Self::contains_recursive(&self.root, value)
+    }
+
+    fn find_min_value(node: &Option<Box<Node<T>>>) -> T
+    where
+        T: Clone
+    {
+        let mut current = node.as_ref().unwrap();
+        let mut min_value = current.value.clone();
+
+        while let Some(left) = &current.left {
+            min_value = left.value.clone();
+            current = left;
+        }
+
+        min_value
+    }
+
+    fn find_max_value(node: &Option<Box<Node<T>>>) -> T
+    where
+        T: Clone
+    {
+        let mut current = node.as_ref().unwrap();
+        let mut min_value = current.value.clone();
+
+        while let Some(right) = &current.right {
+            min_value = right.value.clone();
+            current = right;
+        }
+
+        min_value
+    }
+}
 pub mod visualizer;
 pub mod display;
 

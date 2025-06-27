@@ -2,12 +2,6 @@ use final_test::handlers::algo::handle_algorithms_menu;
 use final_test::handlers::strct::handle_structures_menu;
 use final_test::handlers::time_complexity::handle_time_complexity_menu;
 use std::io;
-
-enum Choice {
-    Structures,
-    Algos,
-}
-
 fn main() {
     let array = [64, 32, 4, 8, 2, 128, 1, 512, 256];
 

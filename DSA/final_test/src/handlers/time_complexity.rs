@@ -32,7 +32,8 @@ fn handle_data_structure_complexity() {
         println!("\n{}{}Choose a data structure to view time complexity:{}", BOLD, CYAN, RESET);
         println!("1. Heap");
         println!("2. Priority Queue");
-        // Add more data structures here
+        println!("3. Binary Search Tree (BST)");
+        println!("4. AVL Tree");
         println!("0. Back");
 
         let mut choice = String::new();
@@ -43,6 +44,8 @@ fn handle_data_structure_complexity() {
         match choice.trim() {
             "1" => time_complexity::display_heap_time_complexity(),
             "2" => time_complexity::display_priority_queue_time_complexity(),
+            "3" => time_complexity::display_bst_time_complexity(),
+            "4" => time_complexity::display_avl_time_complexity(),
             "0" | "" => break,
             _ => println!("{}Invalid choice, please try again{}", YELLOW, RESET),
         }
