@@ -38,6 +38,7 @@ pub fn display_time_complexity_table(algorithm: &SortingAlgorithm) {
         SortingAlgorithm::Bubble => "Bubble Sort",
         SortingAlgorithm::Merge => "Merge Sort",
         SortingAlgorithm::Quick => "Quick Sort",
+        SortingAlgorithm::Bucket => "Bucket Sort",
     };
 
     println!("\n{}{}{} Time Complexity:{}", BOLD, CYAN, algo_name, RESET);
@@ -90,6 +91,13 @@ pub fn display_time_complexity_table(algorithm: &SortingAlgorithm) {
                 }
             }
         }
+        SortingAlgorithm::Bucket => {
+            println!("{}{:<15} {:<8} {:<8} {:<8}{}", GREEN, "Best Case", "n+k", "n+k", "n+k", RESET);
+            println!("{}{:<15} {:<8} {:<8} {:<8}{}", BLUE, "Average Case", "n+k", "n+k", "n+k", RESET);
+            println!("{}{:<15} {:<8} {:<8} {:<8}{}", YELLOW, "Worst Case", "n²", "n²", "n²", RESET);
+            println!();
+            println!("Note: k is the number of buckets. Best/Average case assumes uniform distribution.");
+        }
     }
 }
 
@@ -100,6 +108,7 @@ pub fn display_algorithm_menu() -> Vec<&'static str> {
         "3. Bubble Sort",
         "4. Merge Sort",
         "5. Quick Sort",
+        "6. Bucket Sort",
     ];
 
     println!("\n{}{}Choose algorithm or input none numerical value to quit:{}", BOLD, CYAN, RESET);

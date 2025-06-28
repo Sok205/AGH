@@ -60,6 +60,7 @@ fn handle_sorting_algorithm_complexity() {
         println!("3. Bubble Sort");
         println!("4. Merge Sort");
         println!("5. Quick Sort");
+        println!("6. Bucket Sort");
         println!("0. Back");
 
         let mut choice = String::new();
@@ -73,6 +74,7 @@ fn handle_sorting_algorithm_complexity() {
             "3" => display_time_complexity_table(&SortingAlgorithm::Bubble),
             "4" => display_time_complexity_table(&SortingAlgorithm::Merge),
             "5" => display_time_complexity_table(&SortingAlgorithm::Quick),
+            "6" => display_time_complexity_table(&SortingAlgorithm::Bucket),
             "0" | "" => break,
             _ => println!("{}Invalid choice, please try again{}", YELLOW, RESET),
         }

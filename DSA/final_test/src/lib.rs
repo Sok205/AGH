@@ -140,6 +140,35 @@ pub mod sorting_algorithms {
         array.swap(i, high);
         i
     }
+    
+    pub fn bucket_sort(array: &[i32], len: usize) -> Vec<i32> {
+        if len <= 1 {
+            return array.to_vec();
+        }
+        let max_v = *array.iter().max().unwrap();
+        let min_v = *array.iter().min().unwrap();
+        let range = (max_v - min_v) as f64;
+        
+        let mut bucket = vec![vec![]; len];
+        
+        for &num in array{
+            let index = ((num - min_v) as f64 / (range + 1.0) * (len as f64 - 1.0)) as usize;
+        }
+        
+        for i in 0..len{
+            if !bucket[i].is_empty() {
+                insertion_sort(&*bucket[i], len);
+            }
+        }
+        
+        let mut result = Vec::new();
+        
+        for i in 0..len{
+            result.extend(bucket[i].iter());
+        }
+        result
+        
+    }
 }
 pub struct Heap<T, F>
 where F: Fn(&T, &T) -> bool,
