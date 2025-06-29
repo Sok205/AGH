@@ -140,6 +140,35 @@ pub mod sorting_algorithms {
         array.swap(i, high);
         i
     }
+
+    pub fn bucket_sort(array: &[i32], len: usize) -> Vec<i32> {
+        if len <= 1 {
+            return array.to_vec();
+        }
+        let max_v = *array.iter().max().unwrap();
+        let min_v = *array.iter().min().unwrap();
+        let range = (max_v - min_v) as f64;
+
+        let mut bucket = vec![vec![]; len];
+
+        for &num in array{
+            let index = ((num - min_v) as f64 / (range + 1.0) * (len as f64 - 1.0)) as usize;
+        }
+
+        for i in 0..len{
+            if !bucket[i].is_empty() {
+                insertion_sort(&*bucket[i], len);
+            }
+        }
+
+        let mut result = Vec::new();
+
+        for i in 0..len{
+            result.extend(bucket[i].iter());
+        }
+        result
+
+    }
 }
 pub struct Heap<T, F>
 where F: Fn(&T, &T) -> bool,
@@ -280,6 +309,110 @@ where
     }
 }
 
+pub struct BST<T>
+where
+    T: Ord
+{
+    root: Option<Box<Node<T>>>,
+}
+
+struct Node<T>
+where
+    T: Ord,
+{
+    value: T,
+    left: Option<Box<Node<T>>>,
+    right: Option<Box<Node<T>>>,
+}
+
+impl<T> BST<T>
+where
+    T: Ord,
+{
+    pub fn new() -> Self {
+        Self { root: None }
+    }
+
+    pub fn insert(&mut self, value: T) {
+        let root = &mut self.root;
+
+        if root.is_none() {
+            *root = Some(Box::new(Node {
+                value,
+                left: None,
+                right: None,
+            }));
+            return;
+        }
+
+        Self::insert_recursive(root, value);
+    }
+
+    fn insert_recursive(node: &mut Option<Box<Node<T>>>, value: T) {
+        if let Some(n) = node {
+            if value < n.value {
+                Self::insert_recursive(&mut n.left, value);
+            } else if value > n.value {
+                Self::insert_recursive(&mut n.right, value);
+            }
+        } else {
+            *node = Some(Box::new(Node {
+                value,
+                left: None,
+                right: None,
+            }));
+        }
+    }
+
+    fn contains_recursive(node: &Option<Box<Node<T>>>, value: &T) -> bool {
+        match node {
+            None => false,
+            Some(n) => {
+                if value < &n.value {
+                    Self::contains_recursive(&n.left, value)
+                } else if value > &n.value {
+                    Self::contains_recursive(&n.right, value)
+                } else {
+                    true
+                }
+            }
+        }
+    }
+
+    pub fn contains(&self, value: &T) -> bool {
+        Self::contains_recursive(&self.root, value)
+    }
+
+    fn find_min_value(node: &Option<Box<Node<T>>>) -> T
+    where
+        T: Clone
+    {
+        let mut current = node.as_ref().unwrap();
+        let mut min_value = current.value.clone();
+
+        while let Some(left) = &current.left {
+            min_value = left.value.clone();
+            current = left;
+        }
+
+        min_value
+    }
+
+    fn find_max_value(node: &Option<Box<Node<T>>>) -> T
+    where
+        T: Clone
+    {
+        let mut current = node.as_ref().unwrap();
+        let mut min_value = current.value.clone();
+
+        while let Some(right) = &current.right {
+            min_value = right.value.clone();
+            current = right;
+        }
+
+        min_value
+    }
+}
 pub mod visualizer;
 pub mod display;
 
@@ -287,14 +420,20 @@ pub mod handlers {
     pub mod algo;
     pub mod strct;
     pub mod time_complexity;
+    pub mod other;
 }
 
 pub mod theories{
     pub mod heap;
     pub mod priority_queue;
     pub mod time_complexity;
+    pub mod rabin_karp;
 }
 
 pub mod interactive {
     pub mod priority_queue;
+}
+
+pub mod string_algos {
+    pub mod rabin_karp;
 }

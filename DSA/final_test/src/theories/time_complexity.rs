@@ -71,3 +71,57 @@ pub fn display_priority_queue_time_complexity() {
     println!("- A* search algorithm");
     println!("- Huffman coding for data compression");
 }
+
+pub fn display_bst_time_complexity() {
+    println!("\n{}{}Binary Search Tree Time Complexity{}", BOLD, CYAN, RESET);
+
+    println!("\n{}{:<20} {:<15} {:<15}{}", BOLD, "Operation", "Time Complexity", "Space Complexity", RESET);
+    println!("{}{:-<20} {:-<15} {:-<15}{}", BOLD, "", "", "", RESET);
+
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Search", "O(h)*", "O(1)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Insert", "O(h)*", "O(1)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Delete", "O(h)*", "O(1)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Traversal", "O(n)", "O(h)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Min/Max", "O(h)", "O(1)", RESET);
+
+    println!("\n{}*where h is the height of the tree (worst case: O(n) for unbalanced trees){}", YELLOW, RESET);
+
+    println!("\n{}BST Properties:{}", BOLD, GREEN);
+    println!("- For any node, all values in left subtree < node's value");
+    println!("- For any node, all values in right subtree > node's value");
+    println!("- No duplicate values (in standard implementation)");
+    println!("- In-order traversal produces sorted output");
+
+    println!("\n{}Applications:{}", BOLD, GREEN);
+    println!("- Symbol tables in compilers");
+    println!("- Database indexing");
+    println!("- Implementing associative arrays");
+    println!("- Implementation of sets and maps in STL libraries");
+}
+
+pub fn display_avl_time_complexity() {
+    println!("\n{}{}AVL Tree Time Complexity{}", BOLD, CYAN, RESET);
+
+    println!("\n{}{:<20} {:<15} {:<15}{}", BOLD, "Operation", "Time Complexity", "Space Complexity", RESET);
+    println!("{}{:-<20} {:-<15} {:-<15}{}", BOLD, "", "", "", RESET);
+
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Search", "O(log n)", "O(1)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Insert", "O(log n)", "O(1)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Delete", "O(log n)", "O(1)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Traversal", "O(n)", "O(log n)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Rotation", "O(1)", "O(1)", RESET);
+    println!("{}{:<20} {:<15} {:<15}{}", GREEN, "Rebalancing", "O(log n)", "O(1)", RESET);
+
+    println!("\n{}AVL Tree Properties:{}", BOLD, GREEN);
+    println!("- Self-balancing binary search tree");
+    println!("- For any node, height difference between left and right subtrees ≤ 1");
+    println!("- Balance factor = height(left subtree) - height(right subtree)");
+    println!("- Balance factor must be -1, 0, or 1 for all nodes");
+    println!("- Guaranteed O(log n) height");
+
+    println!("\n{}Applications:{}", BOLD, GREEN);
+    println!("- Database indexing");
+    println!("- In-memory sorting");
+    println!("- Network routing algorithms");
+    println!("- Applications where lookups are more frequent than insertions/deletions");
+}

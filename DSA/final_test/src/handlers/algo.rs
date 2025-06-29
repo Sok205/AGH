@@ -1,6 +1,16 @@
-use crate::sorting_algorithms::{selection_sort, insertion_sort, bubble_sort, merge_sort, quick_sort};
+use crate::sorting_algorithms::{
+    selection_sort, 
+    insertion_sort, 
+    bubble_sort, 
+    merge_sort, 
+    quick_sort,
+    bucket_sort,
+};
 use crate::visualizer::{Visualizer, SortingAlgorithm};
-use crate::display::{display_time_complexity_table, display_algorithm_menu, display_sorting_header};
+use crate::display::{
+    display_time_complexity_table, 
+    display_algorithm_menu, 
+    display_sorting_header};
 use std::io;
 
 pub fn handle_algorithms_menu(array: &[i32]) {
@@ -43,6 +53,13 @@ pub fn handle_algorithms_menu(array: &[i32]) {
                 vis.visualize(array, quick_sort);
                 display_time_complexity_table(&SortingAlgorithm::Quick);
             },
+            
+            "6" => {
+                display_sorting_header("Sort Header");
+                let vis = Visualizer::new(500, true, SortingAlgorithm::Bucket);
+                vis.visualize(array, bucket_sort);
+                display_time_complexity_table(&SortingAlgorithm::Bucket)
+            }
             _ => break,
         }
     }

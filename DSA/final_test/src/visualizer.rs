@@ -17,6 +17,7 @@ pub enum SortingAlgorithm {
     Bubble,
     Merge,
     Quick,
+    Bucket,
 }
 
 pub enum DataStructures{
@@ -79,6 +80,7 @@ impl Visualizer {
             SortingAlgorithm::Bubble => "Bubble Sort".to_string(),
             SortingAlgorithm::Merge => "Merge Sort".to_string(),
             SortingAlgorithm::Quick => "Quick Sort".to_string(),
+            SortingAlgorithm::Bucket => "Bucket Sort".to_string(),
         }
     }
 
@@ -96,6 +98,7 @@ impl Visualizer {
             SortingAlgorithm::Bubble => self.visualize_bubble(array, sort_fn),
             SortingAlgorithm::Merge => self.visualize_merge(array, sort_fn),
             SortingAlgorithm::Quick => self.visualize_quick(array, sort_fn),
+            SortingAlgorithm::Bucket => self.visualize_bucket(array, sort_fn),
         }
     }
 
@@ -279,6 +282,87 @@ impl Visualizer {
         }
 
         step
+    }
+
+    fn visualize_bucket<F>(&self, array: &[i32], sort_fn: &F) -> Vec<i32>
+    where
+        F: Fn(&[i32], usize) -> Vec<i32>,
+    {
+        let len = array.len();
+        if len <= 1 {
+            return array.to_vec();
+        }
+
+        let max_val = *array.iter().max().unwrap();
+        let min_val = *array.iter().min().unwrap();
+        let range = (max_val - min_val) as f64;
+
+        let mut bucket = vec![vec![]; len];
+
+        println!("\n{}Starting Bucket Sort{}", CYAN, RESET);
+        println!("Initial array: {}", Self::format_array(array, &[], &[]));
+        println!("Min value: {}, Max value: {}, Range: {}", min_val, max_val, range);
+        thread::sleep(Duration::from_millis(self.delay_ms));
+
+        println!("\n{}Step 1: Distributing elements into buckets{}", BLUE, RESET);
+        for (i, &num) in array.iter().enumerate() {
+            let index = ((num - min_val) as f64 / (range + 1.0) * (len as f64 - 1.0)) as usize;
+            println!("Element {} ({}) goes to bucket {}", i, num, index);
+            bucket[index].push(num);
+
+            self.display_buckets(&bucket);
+            thread::sleep(Duration::from_millis(self.delay_ms));
+        }
+
+        println!("\n{}Step 2: Sorting individual buckets{}", BLUE, RESET);
+        for i in 0..len {
+            if !bucket[i].is_empty() {
+                println!("Sorting bucket {}: {:?}", i, bucket[i]);
+
+                let bucket_len = bucket[i].len();
+                for j in 1..bucket_len {
+                    let key = bucket[i][j];
+                    let mut k = j;
+                    while k > 0 && bucket[i][k - 1] > key {
+                        bucket[i][k] = bucket[i][k - 1];
+                        k -= 1;
+                    }
+                    bucket[i][k] = key;
+
+                    println!("After insertion step {}: {:?}", j, bucket[i]);
+                    self.display_buckets(&bucket);
+                    thread::sleep(Duration::from_millis(self.delay_ms));
+                }
+            }
+        }
+
+        println!("\n{}Step 3: Concatenating buckets{}", BLUE, RESET);
+        let mut result = Vec::new();
+        for i in 0..len {
+            if !bucket[i].is_empty() {
+                println!("Adding bucket {} to result: {:?}", i, bucket[i]);
+                result.extend(bucket[i].iter());
+
+                println!("Current result: {}", Self::format_array(&result, &[], &[]));
+                thread::sleep(Duration::from_millis(self.delay_ms));
+            }
+        }
+
+        println!("\n{}Bucket Sort complete!{}", GREEN, RESET);
+        result
+    }
+
+    fn display_buckets(&self, buckets: &[Vec<i32>]) {
+        println!("Current buckets:");
+        for (i, bucket) in buckets.iter().enumerate() {
+            if !bucket.is_empty() {
+                println!("  Bucket {}: {:?}", i, bucket);
+            } else {
+                println!("  Bucket {}: []", i);
+            }
+        }
+        println!();
+        thread::sleep(Duration::from_millis(self.delay_ms / 2));
     }
 
     fn partition_visualize(&self, array: &mut Vec<i32>, low: usize, high: usize, step: usize) -> usize {
