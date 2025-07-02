@@ -20,7 +20,7 @@ pub mod sorting_algorithms {
         let mut result = array.to_vec();
 
         for i in 1..len_array {
-            let mut key = result[i];
+            let key = result[i];
             let mut j = i;
             while j > 0 && result[j - 1] > key {
                 result[j] = result[j - 1];
@@ -149,7 +149,7 @@ pub mod sorting_algorithms {
         let min_v = *array.iter().min().unwrap();
         let range = (max_v - min_v) as f64;
 
-        let mut bucket = vec![vec![]; len];
+        let bucket = vec![vec![]; len];
 
         for &num in array{
             let index = ((num - min_v) as f64 / (range + 1.0) * (len as f64 - 1.0)) as usize;
@@ -169,6 +169,33 @@ pub mod sorting_algorithms {
         result
 
     }
+
+    pub fn counting_sort(A: &[i32], len: usize, input_len: usize) -> Vec<i32> {
+        let mut C = vec![0; input_len];
+
+        for i in 0..len {
+            let index = A[i] as usize;
+            C[index] += 1;
+        }
+
+        let mut B = vec![0; len];
+
+        for i in 1..input_len {
+            C[i] += C[i - 1];
+        }
+
+        for i in (0..len).rev() {
+            let index = A[i] as usize;
+            B[C[index] - 1] = A[i];
+            C[index] -= 1;
+        }
+
+        B
+    }
+    
+    // pub fn radix_sort(A: &[i32], len: usize) -> Vec<i32> {
+    // counting sort where we 
+    // }
 }
 pub struct Heap<T, F>
 where F: Fn(&T, &T) -> bool,
@@ -437,3 +464,5 @@ pub mod interactive {
 pub mod string_algos {
     pub mod rabin_karp;
 }
+
+pub mod quiz;

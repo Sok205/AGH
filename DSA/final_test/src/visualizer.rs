@@ -88,9 +88,9 @@ impl Visualizer {
     where
         F: Fn(&[i32], usize) -> Vec<i32>,
     {
-        let mut result = array.to_vec();
+        let result = array.to_vec();
         let len = array.len();
-        let mut prev_result = array.to_vec();
+        let prev_result = array.to_vec();
 
         match self.algorithm {
             SortingAlgorithm::Selection => self.visualize_selection(array, sort_fn),
@@ -121,7 +121,7 @@ impl Visualizer {
                 result[j] = partial_sort[j];
             }
 
-            let mut highlights = vec![i];
+            let highlights = vec![i];
 
             print!("\r\x1B[K");
             print!("Step {}/{}: ", i+1, len);
@@ -187,7 +187,7 @@ impl Visualizer {
                 }
             }
 
-            let mut highlights = vec![i-1];
+            let highlights = vec![i-1];
 
             for j in 0..i {
                 result[j] = partial_sort[j];

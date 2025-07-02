@@ -3,8 +3,8 @@ use crate::display::{BOLD, CYAN, YELLOW, RESET};
 use crate::theories::time_complexity;
 use crate::visualizer::SortingAlgorithm;
 use crate::display::display_time_complexity_table;
-use crate::handlers::other::handle_other_algorithms_menu;
 use crate::theories::rabin_karp::display_rabin_karp_time_complexity;
+use crate::quiz::run_time_complexity_quiz;
 
 pub fn handle_time_complexity_menu() {
     time_complexity::display_time_complexity_theory();
@@ -14,6 +14,7 @@ pub fn handle_time_complexity_menu() {
         println!("1. Data Structures");
         println!("2. Sorting Algorithms");
         println!("3. Other Algorithms");
+        println!("4. Quiz");
         println!("0. Back to main menu");
 
         let mut choice = String::new();
@@ -25,6 +26,7 @@ pub fn handle_time_complexity_menu() {
             "1" => handle_data_structure_complexity(),
             "2" => handle_sorting_algorithm_complexity(),
             "3" => handle_other_algorithm_complexity(),
+            "4" => run_time_complexity_quiz(),
             "0" | "" => break,
             _ => println!("{}Invalid choice, please try again{}", YELLOW, RESET),
         }
